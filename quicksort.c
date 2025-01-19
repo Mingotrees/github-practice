@@ -1,41 +1,44 @@
 #include <stdio.h>
 
-void swap(int arr[], int a, int b){
-    int temp;
-    temp = arr[a];
-    arr[a] = arr[b];
-    arr[b] = temp;
+void swap(int* a, int* b){
+    int temp = *a;
+    *a = *b;
+    *b = temp;
 }
 
-int findPart(int arr[], int* low, int* high){
-    int index = *low;
-    int pivot = arr[*low];
-    for(int i = *low; i <= *high; i++){
+int partition(int arr[], int low, int high){
+    int pivot = arr[low];
+    int index = low + 1;
+    for(int i = low + 1; i <= high; i++){
         if(arr[i] < pivot){
-            swap(arr, i, index);
+            swap(&arr[i], &arr[index]);
             index++;
         }
     }
-    swap(arr, ((high + 1) /2), index);
-    return index;
+
+    swap(&arr[index - 1], &arr[low]);
+
+    return index - 1;
 }
 
-void quickSort(int arr[], int* low, int* high){
-    if(*low < *high){
-        int part = findPart(arr, low, high);
-        quickSort(arr, low, &part);
-        quickSort(arr, &part, high);
+void quickSort(int* arr, int low, int high){
+    if(low < high){
+        int part_index = partition(arr, low, high);
+        quickSort(arr, low, part_index - 1);
+        quickSort(arr, part_index + 1, high);
     }
 }
 
 int main(){
-    int arr[] = {1,5,3,6,7,8,9};
+    int arr[10] = {5,6,2,3,1,4,9,7,8,10};
     int n = sizeof(arr)/sizeof(arr[0]);
-    //find partition
-    int low = 0, high = n-1;
-    quickSort(arr, &low, &high);
+    quickSort(arr, 0, n-1);
+
+
+    printf("SORTED ARRAY: ");
     for(int i = 0; i < n; i++){
-        printf("%d", arr[i]);
+        printf("%d ", arr[i]);
     }
 
+    return 0;
 }
